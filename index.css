@@ -5,21 +5,45 @@
     align-items: center;
 }
 
-.MapButtons{
+.MapButtons {
     width: 100%;
     justify-content: center;
     display: flex;
-}
-
-.subBox{
+    height: 50px;
     display: flex;
     flex-direction: row;
 }
 
-.subID{
+.legendAndBox{
+    display: flex;
+    flex-direction: row;
+}
+
+button {
+    width: 100%;
+    padding: 5px;
+    font-weight: bold;
+}
+
+.subBox {
     width: 100%;
     display: flex;
     justify-content: center;
+    flex-direction: row;
+}
+@media (max-width: 800px) {
+    .subBox {
+        flex-direction: column;
+    }
+}
+
+.subID {
+    width: 100%;
+    height: 50px;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    background-color: rgb(241, 173, 173);
 }
 
 #content .map path {
@@ -27,12 +51,104 @@
     stroke: #aaa;
 }
 
-.MapID{
-    width: 100%;
+.sliderText {
+    position: absolute;
+    top: 10%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+/*Not the most efficient way to do this */
+.slider2011{
+    left: 1%;
+}
+.slider2012{
+    left: 13%;
+}
+.slider2013{
+    left: 25%;
+}
+.slider2014{
+    left: 37%;
+}
+.slider2015{
+    left: 50%;
+}
+.slider2016{
+    left: 63%;
+}
+.slider2017{
+    left: 75%;
+}
+.slider2018{
+    left: 87%;
+}
+.slider2019{
+    left: 99%;
+}
+
+.chartLegendBox{
+    display: flex;
+    justify-content: center;
+}
+.chartLegend{
+    font-size: larger;
+    width: fit-content;
     display: flex;
     flex-direction: row;
     justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+.legendLine4{
+    margin-right: 5px;
+    width: 30px;
+    height: 5px;
+    background-color: #1f77b4;
+}
+.legendLine3{
+    margin-left: 5px;
+    margin-right: 5px;
+    width: 30px;
+    height: 5px;
+    background-color: #ff7f0e;
+}
+.legendLineT{
+    margin-left: 5px;
+    margin-right: 5px;
+    width: 30px;
+    height: 5px;
+    background-color: #2ca02c;
+}
+.legendLine2{
+    margin-left: 5px;
+    margin-right: 5px;
+    width: 30px;
+    height: 5px;
+    background-color: #d62728;
+}
+.legendLine1{
+    margin-left: 5px;
+    margin-right: 5px;
+    width: 30px;
+    height: 5px;
+    background-color: #9467bd;
+}
+.legendLineOther{
+    margin-left: 5px;
+    margin-right: 5px;
+    width: 30px;
+    height: 5px;
+    background-color: #8c564b;
+}
+.legendLineNone{
+    margin-left: 5px;
+    margin-right: 5px;
+    width: 30px;
+    height: 5px;
+    background-color: #e377c2;
+}
+
 
 .NavBar {
     width: 100%;
@@ -61,6 +177,7 @@
 /*slider from https://www.w3schools.com/howto/howto_js_rangeslider.asp */
 .slidecontainer {
     padding: 2px;
+    position: relative;
     /* Width of the outside container */
 }
 

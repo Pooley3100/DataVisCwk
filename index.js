@@ -1,12 +1,31 @@
-const width = 800
-const height = 600
+let width = 900
+let height = 600
 
 //Grabbing elements
 const tooltip = d3.select('#tooltip');
-const crimeRateChloro = d3.select('g.map').attr("width", width).attr("height", height);
-const compareChloro = d3.select('g.compare').attr("width", width).attr("height", height);
+const crimeRateChloro = d3.select('#crimeBox').attr("width", width).attr("height", height);
+const compareChloro = d3.select('#compareBox').attr("width", width).attr("height", height);
 const mapLegend = d3.select('#mapLegend')
 const mapLegendSecond = d3.select('#mapLegendSecond')
+const chartLegendBox = document.getElementById("chartLegendBox");
+
+//Function to deal with resize and re adjust chloro map size
+const containerMapBox = document.getElementById("containerMap");
+width = containerMapBox.clientWidth / 2 - 100;
+const resizeObserver = new ResizeObserver(entries => {
+    for (let entry of entries) {
+        if(entry.contentRect.width < 750){
+            width = entry.contentRect.width - 50
+        } else{
+        width = entry.contentRect.width / 2 - 100;
+        }
+        console.log(width);
+        hotReload();
+    }
+});
+resizeObserver.observe(containerMapBox);
+
+chartLegendBox.style.display = "none";
 
 const projection = d3.geoMercator();
 const geoGenerator = d3.geoPath().projection(projection);
@@ -15,6 +34,9 @@ var selectedYear = "2015";
 var dataLoaded = false;
 var parsedData = NaN;
 var london_geoJson = NaN;
+var selectedCompare = "Median Salary" //Can change to NVQ4+%
+let maxSalary = 0;
+let maxCrimeRate = 0;
 
 //Entry Point
 Promise.all([
@@ -25,6 +47,35 @@ Promise.all([
         //Strip ,
         d["Median Salary"] = +d["Median Salary"].replace(/,/g, '');
         d["Crime Rate"] = +d["Crime Rate"].replace(/,/g, "");
+        d['NVQ4+%'] = +d['NVQ4+%'].replace(/,/g, "");
+        d['NVQ3%'] = +d['NVQ3%'].replace(/,/g, "");
+        d['Trade Apprenticeship'] = +d['Trade Apprenticeship'].replace(/,/g, "");
+        d['NVQ2%'] = +d['NVQ2%'].replace(/,/g, "");
+        d['NVQ1'] = +d['NVQ1'].replace(/,/g, "");
+        d['Other'] = +d['Other'].replace(/,/g, "");
+        d['None'] = +d['None'].replace(/,/g, "");
+
+        if (isNaN(d['NVQ4+%'])) {
+            d['NVQ4+%'] = 0;
+        }
+        if (isNaN(d['NVQ3%'])) {
+            d['NVQ3%'] = 0;
+        }
+        if (isNaN(d['Trade Apprenticeship'])) {
+            d['Trade Apprenticeship'] = 0;
+        }
+        if (isNaN(d['NVQ2%'])) {
+            d['NVQ2%'] = 0;
+        }
+        if (isNaN(d['NVQ1'])) {
+            d['NVQ1'] = 0;
+        }
+        if (isNaN(d['Other'])) {
+            d['Other'] = 0;
+        }
+        if (isNaN(d['None'])) {
+            d['None'] = 0;
+        }
     });
     parsedData = csvData;
     london_geoJson = geoJson;
@@ -38,17 +89,20 @@ function loadMap(csvData, geoJson) {
     crimeRateChloro.selectAll("*").remove();
 
     // Filter CSV for selected year
+    console.log(csvData)
     const filteredData = csvData.filter(row => row.Year === selectedYear);
-    //Re-adjust size
+
     projection.fitSize([width, height], geoJson);
 
-    // Create a mapping of Borough to crimerate and clean data
+    maxCrimeRate = 0;
+
     const crimeRateMap = new Map();
     filteredData.forEach(row => {
         crimeRateMap.set(row.Borough, +row["Crime Rate"]);
+        maxCrimeRate = Math.max(maxCrimeRate, +row["Crime Rate"])
     });
 
-    // Bind data to GeoJSON features
+    // Loop through geojson and bind to attribute to each borough
     geoJson.features.forEach(feature => {
         const boroughName = feature.properties.LAD13NM;
         feature.properties.crimerate = crimeRateMap.get(boroughName);
@@ -83,7 +137,7 @@ function loadMap(csvData, geoJson) {
         // hide tooltip
         .on("mouseout", function (event, d) {
             tooltip.transition().duration(200).style("opacity", 0);
-            d3.select(this).attr("fill", d => d.properties.crimerate ? d3.interpolateReds(d.properties.crimerate / 50000) : "#333");
+            d3.select(this).attr("fill", d => d.properties.crimerate ? d3.interpolateReds(d.properties.crimerate / maxCrimeRate) : "#333");
         });
 }
 
@@ -96,12 +150,12 @@ function loadMapCompare(csvData, geoJson) {
     //Re-adjust size
     projection.fitSize([width, height], geoJson);
 
-    let maxSalary = 0;
+    maxSalary = 0;
     // Create a mapping of Borough to crimerate and clean data
     const compareMap = new Map();
     filteredData.forEach(row => {
-        compareMap.set(row.Borough, row["Median Salary"]);
-        maxSalary = Math.max(maxSalary, row["Median Salary"]);
+        compareMap.set(row.Borough, row[selectedCompare]);
+        maxSalary = Math.max(maxSalary, row[selectedCompare]);
     });
     //console.log(compareMap)
 
@@ -130,7 +184,7 @@ function loadMapCompare(csvData, geoJson) {
         //tooltips https://d3-graph-gallery.com/graph/interactivity_tooltip.html
         .on("mouseover", function (event, d) {
             tooltip.transition().duration(100).style("opacity", 1);
-            tooltip.html(`${d.properties.name} has a median salry of: ${d.properties.salary || "No Data"}`)
+            tooltip.html(`${d.properties.name} has a ${selectedCompare} of: ${d.properties.salary || "No Data"}`)
             d3.select(this).attr("fill", "red");
         })
         .on("mousemove", function () {
@@ -149,7 +203,10 @@ function loadLegend(csvData) {
     mapLegend.selectAll("*").remove();
 
     //Colour scale and text
-    const legendData = [0, 10000, 20000, 30000, 40000, 50000];
+    const legendData = [];
+    for (let i = 0; i < 6; i++) {
+        legendData.push(Math.round(i / 5 * maxCrimeRate));
+    }
     const colourScale = d3.scaleThreshold().domain(legendData)
         .range(d3.schemeReds[7]);
 
@@ -189,7 +246,11 @@ function loadLegendCompare(csvData) {
     mapLegendSecond.selectAll("*").remove();
 
     //Colour scale and text
-    const legendData = [0, 10000, 20000, 30000, 40000, 50000];
+    //contrast between 0 and maxSalary
+    const legendData = [];
+    for (let i = 0; i < 6; i++) {
+        legendData.push(Math.round(i / 5 * maxSalary));
+    }
     const colourScale = d3.scaleThreshold().domain(legendData)
         .range(d3.schemeBlues[7]);
 
@@ -226,6 +287,9 @@ function loadLegendCompare(csvData) {
 
 
 function hotReload() {
+    crimeRateChloro.attr("width", width);
+    compareChloro.attr("width", width);
+
     loadMap(parsedData, london_geoJson);
     loadLegend(parsedData);
     loadMapCompare(parsedData, london_geoJson)
@@ -262,12 +326,30 @@ function createBarChat(csvData) {
             .attr("y", d => y1(d["Crime Rate"]))
             .attr("height", d => y1(0) - y1(d["Crime Rate"]));
 
-        svg.append("path")
-            .attr("fill", "none")
-            .attr("stroke", "currentColor")
-            .attr("stroke-miterlimit", 1)
-            .attr("stroke-width", 3)
-            .attr("d", line(data));
+        if (selectedCompare != 'Median Salary') {
+            const educLevls = ['NVQ4+%', 'NVQ3%', 'Trade Apprenticeship', 'NVQ2%', 'NVQ1', 'Other', 'None'];
+            const colourScale = d3.scaleOrdinal()
+                .domain(educLevls)
+                .range(d3.schemeCategory10);
+            console.log(colourScale.domain());
+            console.log(colourScale.range());
+            for (const level of educLevls) {
+                const lineGen = _line(d3, x, y2, level);
+                svg.append("path")
+                    .attr("fill", "none")
+                    .attr("stroke", colourScale(level))
+                    .attr("stroke-miterlimit", 1)
+                    .attr("stroke-width", 2)
+                    .attr("d", lineGen(data));
+            }
+        } else {
+            svg.append("path")
+                .attr("fill", "none")
+                .attr("stroke", "currentColor")
+                .attr("stroke-miterlimit", 1)
+                .attr("stroke-width", 3)
+                .attr("d", line(data));
+        }
 
         svg.append("g")
             .attr("fill", "none")
@@ -280,7 +362,7 @@ function createBarChat(csvData) {
             .attr("y", 0)
             .attr("height", height)
             .append("title")
-            .text(d => `${d.Borough} Crime Rate: ${d["Crime Rate"]} and Median Salary ${d["Median Salary"]}`);
+            .text(d => `${d.Borough} Crime Rate: ${d["Crime Rate"]} and ${selectedCompare} ${d[selectedCompare]}`);
 
         svg.append("g")
             .call(xAxis);
@@ -294,11 +376,11 @@ function createBarChat(csvData) {
         return svg.node();
     }
 
-    function _line(d3, x, y2) {
+    function _line(d3, x, y2, lineOption) {
         return (
             d3.line()
                 .x(d => x(d.Borough) + x.bandwidth() / 2)
-                .y(d => y2(d["Median Salary"]))
+                .y(d => y2(d[lineOption]))
         )
     }
 
@@ -320,11 +402,19 @@ function createBarChat(csvData) {
     }
 
     function _y2(d3, data, height, margin) {
-        return (
-            d3.scaleLinear()
-                .domain(d3.extent(data, d => d["Median Salary"]))
-                .rangeRound([height - margin.bottom, margin.top])
-        )
+        if (selectedCompare == "Median Salary") {
+            return (
+                d3.scaleLinear()
+                    .domain(d3.extent(data, d => d[selectedCompare]))
+                    .rangeRound([height - margin.bottom, margin.top])
+            )
+        } else {
+            return (
+                d3.scaleLinear()
+                    .domain([0, 75])
+                    .rangeRound([height - margin.bottom, margin.top])
+            )
+        }
     }
 
     function _xAxis(height, margin, d3, x, width) {
@@ -360,6 +450,13 @@ function createBarChat(csvData) {
     }
 
     function _y2Axis(width, margin, d3, y2, data) {
+        var textLabel = "Null"
+        if (selectedCompare == 'NVQ4+%') {
+            textLabel = "Education Levels %"
+        }
+        else {
+            textLabel = "Salary"
+        }
         return (
             g => g
                 .attr("transform", `translate(${width - margin.right - 12},0)`)
@@ -370,9 +467,10 @@ function createBarChat(csvData) {
                     .attr("y", 10)
                     .attr("fill", "currentColor")
                     .attr("text-anchor", "end")
-                    .text('Salary'))
+                    .text(textLabel))
         )
     }
+
 
     const widthChart = 700;
     const heightChart = 200;
@@ -380,13 +478,14 @@ function createBarChat(csvData) {
     const x = _x(d3, filteredData, margin, widthChart);
     const y1 = _y1(d3, filteredData, heightChart, margin);
     const y2 = _y2(d3, filteredData, heightChart, margin);
-    const line = _line(d3, x, y2);
+    const line = _line(d3, x, y2, selectedCompare)
+
     const xAxis = _xAxis(heightChart, margin, d3, x, widthChart);
     const y1Axis = _y1Axis(margin, d3, y1, filteredData);
     const y2Axis = _y2Axis(widthChart, margin, d3, y2, filteredData);
 
     const chart = _chart(d3, widthChart, heightChart, filteredData, x, y1, line, xAxis, y1Axis, y2Axis);
-    // Assuming you have an HTML element with the ID "chart"
+
     const chartRem = d3.select("#chart");
     chartRem.selectAll("*").remove();
     document.getElementById("chart").appendChild(chart);
@@ -396,12 +495,33 @@ End of Bar-Line Chart Code from Observable reference <-------
 */
 
 
-/** TODOS
- * hover over boroughs to select
- * better text box on hover
- * card layout design
- * legend with scale of colour for two maps
- * select year bar
- * 
- * graph with bar and line to better compare
+/*
+Buttons to select Salary or Education
+*/
+const educationButton = document.getElementById("educationButton");
+const salaryButton = document.getElementById("salaryButton");
+salaryButton.style.backgroundColor = "lightblue";
+
+educationButton.addEventListener("click", () => {
+    chartLegendBox.style.display = "flex";
+    selectedCompare = "NVQ4+%";
+    hotReload();
+    educationButton.style.backgroundColor = "lightblue";
+    salaryButton.style.backgroundColor = "";
+})
+
+salaryButton.addEventListener("click", () => {
+    chartLegendBox.style.display = "none";
+    selectedCompare = "Median Salary";
+    hotReload();
+    salaryButton.style.backgroundColor = "lightblue";
+    educationButton.style.backgroundColor = "";
+});
+
+/** TODOS\
+ * better title
+ * time line slider have axis
+ * Legend for Linesss for education level
+ * I Box
+ * Width Dynamic
  */

@@ -18,36 +18,65 @@
     </div>
     <!-- element where the map for crime rate-->
     <div class="mapBox CardBox">
-        <div class="MapID">
-            <div class="subID">
-                <h4>Crime Rate</h4>
+        <div class="subBox" id="containerMap">
+            <div>
+                <div class="subID">
+                    <h4>Crime Rate</h4>
+                </div>
+                <div class="legendAndBox">
+                    <svg id="mapLegend"></svg>
+                    <svg id="crimeBox">
+                    </svg>
+                </div>
             </div>
-            <div class="MapButtons">
-                <button>Salary</button>
-                <button>Education</button>
+            <div>
+                <div class="MapButtons">
+                    <button id="salaryButton">Salary</button>
+                    <button id="educationButton">Education</button>
+                </div>
+                <div class="legendAndBox">
+                    <svg id="compareBox">
+                    </svg>
+                    <svg id="mapLegendSecond"></svg>
+                </div>
             </div>
         </div>
-        <div class="subBox">
-            <svg id="mapLegend"></svg>
-            <svg width="800px" height="600px">
-                <g class="map"></g>
 
-            </svg>
-
-            <svg width="800px" height="600px">
-                <g class="compare"></g>
-
-            </svg>
-            <svg id="mapLegendSecond"></svg>
-        </div>
-        
     </div>
     <!--https://www.w3schools.com/howto/howto_js_rangeslider.asp-->
     <div class="slidecontainer CardBox">
         <input type="range" min="2011" max="2019" value="2015" class="slider" id="yearsInput">
+        <p class="sliderText slider2011">2011</p>
+        <p class="sliderText slider2012">2012</p>
+        <p class="sliderText slider2013">2013</p>
+        <p class="sliderText slider2014">2014</p>
+        <p class="sliderText slider2015">2015</p>
+        <p class="sliderText slider2016">2016</p>
+        <p class="sliderText slider2017">2017</p>
+        <p class="sliderText slider2018">2018</p>
+        <p class="sliderText slider2019">2019</p>
+    </div>
     </div>
     <div id="chart" class="CardBox">
 
+    </div>
+    <div class="chartLegendBox" id="chartLegendBox">
+        <div class="chartLegend">
+            <div class="legendLine4"></div>
+            <div>= NVQ4+%</div>
+            <div class="legendLine3"></div>
+            <div>= NVQ3%</div>
+            <div class="legendLineT"></div>
+            <div>= Trade</div>
+            <div class="legendLine2"></div>
+            <div>= NVQ2%</div>
+            <div class="legendLine1"></div>
+            <div>= NVQ1%</div>
+            <div class="legendLineOther"></div>
+            <div>= Other%</div>
+            <div class="legendLineNone"></div>
+            <div>= None%</div>
+        </div>
     </div>
 
     <div id="tooltip"></div>
