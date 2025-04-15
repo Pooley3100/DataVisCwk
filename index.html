@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"
+    integrity="sha512-vc58qvvBdrDR4etbxMdlTt4GBQk1qjvyORR2nrsPsFPyrs+/u5c3+1Ct6upOgdZoIl7eq6k3a1UPDSNAQi/32A=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<head>
+    <meta charset="UTF-8">
+    <title>London Crime, Salary and Education</title>
+    <link rel="stylesheet" href="./index.css">
+
+</head>
+
+<body>
+    <div class="NavBar">
+        <h3>London Crime and Socioeconmic Comparison</h3>
+    </div>
+    <!-- element where the map for crime rate-->
+    <div class="mapBox CardBox">
+        <div class="MapID">
+            <div class="subID">
+                <h4>Crime Rate</h4>
+            </div>
+            <div class="MapButtons">
+                <button>Salary</button>
+                <button>Education</button>
+            </div>
+        </div>
+        <div class="subBox">
+            <svg id="mapLegend"></svg>
+            <svg width="800px" height="600px">
+                <g class="map"></g>
+
+            </svg>
+
+            <svg width="800px" height="600px">
+                <g class="compare"></g>
+
+            </svg>
+            <svg id="mapLegendSecond"></svg>
+        </div>
+        
+    </div>
+    <!--https://www.w3schools.com/howto/howto_js_rangeslider.asp-->
+    <div class="slidecontainer CardBox">
+        <input type="range" min="2011" max="2019" value="2015" class="slider" id="yearsInput">
+    </div>
+    <div id="chart" class="CardBox">
+
+    </div>
+
+    <div id="tooltip"></div>
+    <script src="./index.js"></script>
+</body>
+
+</html>
