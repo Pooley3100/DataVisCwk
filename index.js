@@ -518,6 +518,23 @@ salaryButton.addEventListener("click", () => {
     educationButton.style.backgroundColor = "";
 });
 
+//I Box Logic
+const popup = document.getElementById("popupIContainer");
+const popupButton = document.getElementById("iButton");
+document.addEventListener("click", () => {
+    if (popup.style.display === "block") {
+        popup.style.display = "none";
+    }
+  });
+popupButton.addEventListener("click", (event) => {
+    event.stopPropagation();
+    if (popup.style.display === "block") {
+        popup.style.display = "none";
+    } else {
+        popup.style.display = "block";
+    }
+});
+
 /** TODOS\
  * better title
  * time line slider have axis

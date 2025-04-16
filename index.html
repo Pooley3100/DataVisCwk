@@ -14,7 +14,8 @@
 
 <body>
     <div class="NavBar">
-        <h3>London Crime and Socioeconmic Comparison</h3>
+        <h3 class="headerTitle">London Crime and Socioeconmic Comparison</h3>
+        <button id="iButton">i</button>
     </div>
     <!-- element where the map for crime rate-->
     <div class="mapBox CardBox">
@@ -80,7 +81,16 @@
     </div>
 
     <div id="tooltip"></div>
+    <div class="popupIContainer" id="popupIContainer">
+        <div class="popupText"><h2>About</h2>
+        <p>Please use the two buttons above the blue chloropleth map to select either education or salary to compare with.</p>
+        <p>The top row of data visualisations are a dual chloropleth map with the left being the crime rates for each bourgh, and the right being either the meidan salry or percentage of people with the highest education level in the census per borough.</p>
+        <p>In the middle is a slider in which you can select the year with which to compare data for, this affects both the bottom visualisation and the top visualisation.</p>
+        <p>At the bottom is a Bar-Line Chart, with crime rate per borough, and the right y axis is either the corresponding median salary, or if education is selected it shows the distribution of each education level, with a legend at the bottom to see what line colour corresponds with.</p></div>
+    </div>
     <script src="./index.js"></script>
+
+
 </body>
 
 </html>
