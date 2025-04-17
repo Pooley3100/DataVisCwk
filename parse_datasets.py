@@ -10,7 +10,7 @@
 import csv
 import pandas as pd
 
-input_file = "/Users/mattpoole/OwnCodeProjs/data vis/COURSEWORK/Datasets/income-of-tax-payers.csv"
+input_file = "DATASETS/income-of-tax-payers.csv"
 output_file = "parsed_data.csv"
 
 # First clean the income of tax payers file
@@ -24,12 +24,16 @@ with open(input_file, "r") as csvfile:
         area_name = row[1] 
         year = 1999
         for i in range(4, len(row),3):
+            if area_name == 'Richmond-upon-Thames':
+                area_name = 'Richmond upon Thames'
+            elif area_name == 'Kingston-upon-Thames':
+                area_name = 'Kingston upon Thames'
             if(year >= 2011 and year<=2019 and area_name != 'City of London'):
                 dict_out[f'{area_name} {year}'] = {"Median Salary: " : row[i].strip()}
             year+=1
 
 # Second clean the qualifactions file
-df = pd.read_excel("/Users/mattpoole/OwnCodeProjs/data vis/COURSEWORK/Datasets/Qualifications-by-economic-activity-status-borough.xlsx", sheet_name=None)
+df = pd.read_excel("DATASETS/Qualifications-by-economic-activity-status-borough.xlsx", sheet_name=None)
 print(df['2004'].iloc[2][1])
 for i in range(2011, 2020):
     sheet = df[str(i)]
@@ -37,13 +41,8 @@ for i in range(2011, 2020):
         row = sheet.iloc[j]
         #Index's 1 = Area Name, 4 = NVQ4+%, 16 = NVQ3%, 28 = Trade%, 40 = NVQ2, 52 = NVQ1, 64 = other, 76 = none
         if f'{row[1]} {i}' not in dict_out:
-            if row[1] == 'Richmond upon Thames':
-                row[1] = 'Richmond-upon-Thames'
-            elif row[1] == 'Kingston upon Thames':
-                row[1] = 'Kingston-upon-Thames'
-            else:
-                print(f"Error, adding median salary for {row[1]} {i}")
-                continue
+            print(f"Error, adding median salary for {row[1]} {i}")
+            continue
         dict_out[f'{row[1]} {i}']['NVQ4'] = row[4]
         dict_out[f'{row[1]} {i}']['NVQ3'] = row[16]
         dict_out[f'{row[1]} {i}']['Trade'] = row[28]
@@ -53,7 +52,7 @@ for i in range(2011, 2020):
         dict_out[f'{row[1]} {i}']['None'] = row[76]
 
 # Finally append the crime rates, need to sum each crime sub group and sum each month to get a result for the years 2011 to 2019
-crime_df = pd.read_csv("/Users/mattpoole/OwnCodeProjs/data vis/COURSEWORK/Datasets/MPS Borough Level Crime (Historical).csv")
+crime_df = pd.read_csv("DATASETS/MPS Borough Level Crime (Historical).csv")
 
 # columns to rows
 crime_melted = crime_df.melt(
@@ -76,13 +75,8 @@ for _, row in grouped_crime.iterrows():
     year = row["Year"]
     total = row["CrimeCount"]
     if f'{borough} {year}' not in dict_out:
-        if borough == 'Richmond upon Thames':
-            borough = 'Richmond-upon-Thames'
-        elif borough == 'Kingston upon Thames':
-            borough = 'Kingston-upon-Thames'
-        else:
-            print(f"error, adding Crime Rate for {borough} {year}")
-            continue
+        print(f"error, adding Crime Rate for {borough} {year}")
+        continue
     dict_out[f'{borough} {year}']['Crime Rate'] = total
 
 #print(dict_out)

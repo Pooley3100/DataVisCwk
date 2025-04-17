@@ -19,7 +19,7 @@ const resizeObserver = new ResizeObserver(entries => {
         } else {
             width = entry.contentRect.width / 2 - 100;
         }
-        console.log(width);
+        //console.log(width);
         hotReload();
     }
 });
@@ -89,7 +89,7 @@ function loadMap(csvData, geoJson) {
     crimeRateChloro.selectAll("*").remove();
 
     // Filter CSV for selected year
-    console.log(csvData)
+    //console.log(csvData)
     const filteredData = csvData.filter(row => row.Year === selectedYear);
 
     projection.fitSize([width, height], geoJson);
@@ -340,8 +340,8 @@ function createBarChat(csvData) {
                     "#D55E00", 
                     "#CC79A7"  
                 ]);
-            console.log(colourScale.domain());
-            console.log(colourScale.range());
+            //console.log(colourScale.domain());
+            //console.log(colourScale.range());
             for (const level of educLevls) {
                 const lineGen = _line(d3, x, y2, level);
                 svg.append("path")
