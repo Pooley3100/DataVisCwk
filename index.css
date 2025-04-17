@@ -123,49 +123,49 @@ button {
     margin-right: 5px;
     width: 30px;
     height: 5px;
-    background-color: #1f77b4;
+    background-color: #E69F00
 }
 .legendLine3{
     margin-left: 5px;
     margin-right: 5px;
     width: 30px;
     height: 5px;
-    background-color: #ff7f0e;
+    background-color: #56B4E9;
 }
 .legendLineT{
     margin-left: 5px;
     margin-right: 5px;
     width: 30px;
     height: 5px;
-    background-color: #2ca02c;
+    background-color: #009E73;
 }
 .legendLine2{
     margin-left: 5px;
     margin-right: 5px;
     width: 30px;
     height: 5px;
-    background-color: #d62728;
+    background-color: #F0E442;
 }
 .legendLine1{
     margin-left: 5px;
     margin-right: 5px;
     width: 30px;
     height: 5px;
-    background-color: #9467bd;
+    background-color: #0072B2;
 }
 .legendLineOther{
     margin-left: 5px;
     margin-right: 5px;
     width: 30px;
     height: 5px;
-    background-color: #8c564b;
+    background-color: #D55E00;
 }
 .legendLineNone{
     margin-left: 5px;
     margin-right: 5px;
     width: 30px;
     height: 5px;
-    background-color: #e377c2;
+    background-color: #CC79A7;
 }
 
 

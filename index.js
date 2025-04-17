@@ -14,10 +14,10 @@ const containerMapBox = document.getElementById("containerMap");
 width = containerMapBox.clientWidth / 2 - 100;
 const resizeObserver = new ResizeObserver(entries => {
     for (let entry of entries) {
-        if(entry.contentRect.width < 750){
+        if (entry.contentRect.width < 750) {
             width = entry.contentRect.width - 50
-        } else{
-        width = entry.contentRect.width / 2 - 100;
+        } else {
+            width = entry.contentRect.width / 2 - 100;
         }
         console.log(width);
         hotReload();
@@ -328,9 +328,18 @@ function createBarChat(csvData) {
 
         if (selectedCompare != 'Median Salary') {
             const educLevls = ['NVQ4+%', 'NVQ3%', 'Trade Apprenticeship', 'NVQ2%', 'NVQ1', 'Other', 'None'];
+            //Colour scale from Bang Wong
             const colourScale = d3.scaleOrdinal()
                 .domain(educLevls)
-                .range(d3.schemeCategory10);
+                .range([
+                    "#E69F00",
+                    "#56B4E9", 
+                    "#009E73", 
+                    "#F0E442", 
+                    "#0072B2", 
+                    "#D55E00", 
+                    "#CC79A7"  
+                ]);
             console.log(colourScale.domain());
             console.log(colourScale.range());
             for (const level of educLevls) {
@@ -525,7 +534,7 @@ document.addEventListener("click", () => {
     if (popup.style.display === "block") {
         popup.style.display = "none";
     }
-  });
+});
 popupButton.addEventListener("click", (event) => {
     event.stopPropagation();
     if (popup.style.display === "block") {
@@ -536,9 +545,9 @@ popupButton.addEventListener("click", (event) => {
 });
 
 /** TODOS\
- * better title
- * time line slider have axis
- * Legend for Linesss for education level
- * I Box
- * Width Dynamic
+ * better title /
+ * time line slider have axis /
+ * Legend for Linesss for education level /
+ * I Box / 
+ * Width Dynamic /
  */
